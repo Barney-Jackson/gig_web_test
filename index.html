@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Guide</title>
+
+    <!-- Link to PapaParse library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+    <!-- Link to your custom script -->
+    <script defer src="script.js"></script>
+
+    <style>
+        /* Basic styling for table and layout */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        select {
+            margin: 10px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Upcoming Events</h1>
+
+    <!-- Filter dropdowns -->
+    <label for="dateFilter">Filter by Date:</label>
+    <select id="dateFilter">
+        <option value="">All Dates</option>
+        <!-- Options will be added dynamically -->
+    </select>
+
+    <label for="venueFilter">Filter by Venue:</label>
+    <select id="venueFilter">
+        <option value="">All Venues</option>
+        <!-- Options will be added dynamically -->
+    </select>
+
+    <!-- Table to display event data -->
+    <table>
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Venue</th>
+                <th>Address</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be populated by JavaScript -->
+        </tbody>
+    </table>
+
+</body>
+</html>
