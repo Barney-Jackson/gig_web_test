@@ -3,53 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Guide</title>
-
-    <!-- Link to PapaParse library -->
+    <title>Gigger</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-
-    <!-- Link to your custom script -->
-    <script defer src="script.js"></script>
-
     <style>
-        /* Basic styling for table and layout */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
+        /* General Page Styling */
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
+
+        /* Main Heading */
+        h1 {
+            font-family: "Amasis MT Pro Black", Arial, sans-serif;
+            font-size: 3em;
+            font-weight: bold;
+            color: white;
+            margin-top: 20px;
+        }
+
+        /* Subheading */
+        h2 {
+            font-size: 1.5em;
+            font-weight: normal;
+            color: #cccccc;
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+
+        /* Table Styling */
+        table {
+            width: 90%;
+            max-width: 800px;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid white;
+        }
+
         th, td {
-            padding: 8px;
-            border: 1px solid #ddd;
+            padding: 10px;
             text-align: left;
         }
+
         th {
-            background-color: #f2f2f2;
+            background-color: #333333;
+            color: white;
         }
+
+        tr:nth-child(even) {
+            background-color: #1a1a1a;
+        }
+
+        /* Filter Section */
+        .filters {
+            margin-bottom: 20px;
+        }
+
         select {
-            margin: 10px;
             padding: 5px;
+            font-size: 1em;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
+    <!-- Main Heading -->
+    <h1>GIGGER</h1>
+    <h2>Melbourne’s most extensive gig guide</h2>
 
-    <h1>Upcoming Events</h1>
+    <!-- Filters -->
+    <div class="filters">
+        <label for="dateFilter">Date:</label>
+        <select id="dateFilter">
+            <option value="">All Dates</option>
+        </select>
+        
+        <label for="venueFilter">Venue:</label>
+        <select id="venueFilter">
+            <option value="">All Venues</option>
+        </select>
+    </div>
 
-    <!-- Filter dropdowns -->
-    <label for="dateFilter">Filter by Date:</label>
-    <select id="dateFilter">
-        <option value="">All Dates</option>
-        <!-- Options will be added dynamically -->
-    </select>
-
-    <label for="venueFilter">Filter by Venue:</label>
-    <select id="venueFilter">
-        <option value="">All Venues</option>
-        <!-- Options will be added dynamically -->
-    </select>
-
-    <!-- Table to display event data -->
+    <!-- Table -->
     <table>
         <thead>
             <tr>
@@ -61,10 +105,10 @@
                 <th>Link</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- Rows will be populated by JavaScript -->
-        </tbody>
+        <tbody></tbody>
     </table>
 
+    <!-- Script for Loading and Displaying Data -->
+    <script src="script.js"></script>
 </body>
 </html>
