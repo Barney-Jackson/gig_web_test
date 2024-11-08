@@ -1,75 +1,65 @@
-document.addEventListener("DOMContentLoaded", () => {
+// Global variable to hold event data from CSV
+let eventsData = [];
+
+// Function to load data from CSV and populate the table initially
+function loadEventData() {
+    Papa.parse("event_table.csv", {
+        download: true,
+        header: true,
+        complete: function(results) {
+            eventsData = results.data;
+            populateTable(eventsData); // Populate the table with all events initially
+        },
+        error: function(error) {
+            console.error("Error loading CSV:", error);
+        }
+    });
+}
+
+// Function to populate the table with event data
+function populateTable(data) {
     const tableBody = document.querySelector("table tbody");
-    const dateFilter = document.getElementById("dateFilter");
-    const venueFilter = document.getElementById("venueFilter");
+    tableBody.innerHTML = ""; // Clear any existing rows
 
-    // Function to populate the table
-    function populateTable(data) {
-        tableBody.innerHTML = ""; // Clear existing rows
-        data.forEach(row => {
-            const tr = document.createElement("tr");
-            Object.values(row).forEach(cellValue => {
-                const td = document.createElement("td");
-                td.textContent = cellValue;
-                tr.appendChild(td);
-            });
-            tableBody.appendChild(tr);
-        });
+    data.forEach(event => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${event.Event_Name}</td>
+            <td>${event.Date}</td>
+            <td>${event.Time}</td>
+            <td>${event.Venue}</td>
+            <td>${event.Address}</td>
+            <td><a href="${event.Link}" target="_blank">Link</a></td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Function to filter events by the selected date range
+function applyDateRangeFilter() {
+    // Get the selected start and end dates
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+
+    // Check if both dates are selected
+    if (!startDate || !endDate) {
+        alert("Please select both a start and an end date.");
+        return;
     }
 
-    // Load CSV and parse with PapaParse
-    fetch("event_table.csv")
-        .then(response => response.text())
-        .then(csvData => {
-            const parsedData = Papa.parse(csvData, {
-                header: true,  // Assumes first row contains headers
-                skipEmptyLines: true,
-            });
-            populateTable(parsedData.data); // Populate the table with parsed data
-            setupFilters(parsedData.data);  // Populate the filters
-        })
-        .catch(error => console.error("Error loading CSV:", error));
+    // Convert the selected dates to Date objects
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-    // Set up filters with unique values from CSV data
-    function setupFilters(data) {
-        const dates = new Set();
-        const venues = new Set();
+    // Filter events based on the date range
+    const filteredData = eventsData.filter(event => {
+        const eventDate = new Date(event.Date);
+        return eventDate >= start && eventDate <= end;
+    });
 
-        data.forEach(row => {
-            dates.add(row.Date);
-            venues.add(row.Venue);
-        });
+    // Populate the table with filtered data
+    populateTable(filteredData);
+}
 
-        dates.forEach(date => {
-            const option = document.createElement("option");
-            option.value = date;
-            option.textContent = date;
-            dateFilter.appendChild(option);
-        });
-
-        venues.forEach(venue => {
-            const option = document.createElement("option");
-            option.value = venue;
-            option.textContent = venue;
-            venueFilter.appendChild(option);
-        });
-
-        // Attach event listeners to filter dropdowns
-        dateFilter.addEventListener("change", () => filterTable(data));
-        venueFilter.addEventListener("change", () => filterTable(data));
-    }
-
-    // Filter table based on selected filters
-    function filterTable(data) {
-        const selectedDate = dateFilter.value;
-        const selectedVenue = venueFilter.value;
-
-        const filteredData = data.filter(row => {
-            const dateMatch = !selectedDate || row.Date === selectedDate;
-            const venueMatch = !selectedVenue || row.Venue === selectedVenue;
-            return dateMatch && venueMatch;
-        });
-
-        populateTable(filteredData);
-    }
-});
+// Load event data on page load
+loadEventData();

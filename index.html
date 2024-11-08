@@ -82,10 +82,14 @@
 
     <!-- Filters -->
     <div class="filters">
-        <label for="dateFilter">Date:</label>
-        <select id="dateFilter">
-            <option value="">All Dates</option>
-        </select>
+            <!-- Date Range Picker -->
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate">
+        
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate">
+
+        <button onclick="applyDateRangeFilter()">Filter by Date Range</button>
         
         <label for="venueFilter">Venue:</label>
         <select id="venueFilter">
