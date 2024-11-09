@@ -24,12 +24,12 @@ function populateTable(data) {
     data.forEach(event => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${event["Event_Name"]}</td>
+            <td>${event.Event_Title}</td>
             <td>${event.Date}</td>
             <td>${event.Time}</td>
             <td>${event.Venue}</td>
             <td>${event.Address}</td>
-            <td><a href="${event.Link}" target="_blank">Link</a></td>
+            <td><a href="${event.url}" target="_blank">Link</a></td>
         `;
         tableBody.appendChild(row);
     });
