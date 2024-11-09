@@ -24,7 +24,7 @@ function populateTable(data) {
     data.forEach(event => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${event["Event Name"]}</td>
+            <td>${event["Event_Name"]}</td>
             <td>${event.Date}</td>
             <td>${event.Time}</td>
             <td>${event.Venue}</td>
