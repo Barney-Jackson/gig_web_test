@@ -118,8 +118,12 @@ table tbody tr.subheading-row td {
     font-weight: bold;
 }
 
-
-
+#map {
+    height: 500px;
+    width: 100%;
+    max-width: 800px; /* Restrict the maximum width of the table */
+    border-collapse: collapse;
+}
 
 
 /* Media Queries for Smaller Screens */

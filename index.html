@@ -23,7 +23,6 @@
     <!-- Link to External CSS -->
     <link rel="stylesheet" href="styles.css">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <body>
     <!-- Main Heading -->
@@ -57,7 +56,7 @@
     </div>
 </div>
 
-
+<div id="map"></div>
 <!-- Table -->
 <!-- Table Wrapper for Scrolling -->
 <div class="table-container">
@@ -82,6 +81,8 @@
 
 
     <!-- Script for Loading and Displaying Data -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBX9OiBSEsyLVrn86jYrYiKHrBOg7S9bCc&libraries=places&callback=initMap" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

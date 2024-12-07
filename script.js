@@ -1,5 +1,16 @@
 // Global variable to hold event data
 let eventsData = [];
+let map;
+let markers = [];
+
+// Initialize the map
+function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 10,
+        center: { lat: -37.8136, lng: 144.9631 } // Melbourne as default center
+    });
+    loadEventData();
+}
 
 // Helper function to format the date from yyyy/mm/dd to dd/mm/yyyy
 function formatDate(isoDate) {
@@ -82,6 +93,32 @@ function populateTable(data) {
     });
 }
 
+// Populate the map with markers
+function populateMap(data) {
+    markers.forEach(marker => marker.setMap(null));
+    markers = [];
+
+    data.forEach(event => {
+        if (!isNaN(event.Latitude) && !isNaN(event.Longitude)) {
+            const marker = new google.maps.Marker({
+                position: { lat: parseFloat(event.Latitude), lng: parseFloat(event.Longitude) },
+                map,
+                title: event.Event_Title
+            });
+
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<h3>${event.Event_Title}</h3><p>${event.Address}</p>`
+            });
+
+            marker.addListener("click", () => {
+                infoWindow.open(map, marker);
+            });
+
+            markers.push(marker);
+        }
+    });
+}
+
 // Filter events by radius
 function applyRadiusFilter() {
     const inputAddress = document.getElementById("address").value;
@@ -107,6 +144,7 @@ function applyRadiusFilter() {
         });
 
         populateTable(filteredEvents);
+        populateMap(filteredEvents); // Update the map with filtered data
     });
 }
 
@@ -150,10 +188,12 @@ function applyDateRangeFilter() {
     });
 
     populateTable(filteredData);
+    populateMap(filteredData);
 }
 
 // Load event data on page load
 function initialize() {
     loadEventData();
+    populateMap(event);
 }
 initialize();
