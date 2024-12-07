@@ -1,17 +1,12 @@
-// Global variables to hold data
+// Global variable to hold event data
 let eventsData = [];
-let venueData = [];
 
-// Helper function to format the date from yyyy/mm/dd to dd/mm
+// Helper function to format the date from yyyy/mm/dd to dd/mm/yyyy
 function formatDate(isoDate) {
     if (!isoDate || isoDate.trim() === "") return ""; // Handle empty or invalid dates gracefully
 
-    const dateParts = isoDate.split("-");
-    if (dateParts.length === 3) {
-        const [year, month, day] = dateParts;
-        return `${day}/${month}`;
-    }
-    return isoDate;
+    const [year, month, day] = isoDate.split("/");
+    return `${day}/${month}/${year}`; // Format: dd/mm/yyyy
 }
 
 // Convert degrees to radians
@@ -32,21 +27,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c; // Distance in kilometers
 }
 
-// Load venue data from CSV
-function loadVenueData() {
-    Papa.parse("melbourne_venues.csv", {
-        download: true,
-        header: true,
-        complete: function(results) {
-            venueData = results.data;
-        },
-        error: function(error) {
-            console.error("Error loading venue CSV:", error);
-        }
-    });
-}
-
-// Function to load data from CSV and populate the table initially
+// Load event data from CSV
 function loadEventData() {
     Papa.parse("event_table.csv", {
         download: true,
@@ -56,7 +37,7 @@ function loadEventData() {
             populateTable(eventsData);
         },
         error: function(error) {
-            console.error("Error loading CSV:", error);
+            console.error("Error loading event CSV:", error);
         }
     });
 }
@@ -69,7 +50,7 @@ function populateTable(data) {
     let currentDate = "";
 
     data.forEach(event => {
-        const eventDate = new Date(event.Date);
+        const eventDate = new Date(event.Date); // Parse yyyy/mm/dd directly
         const formattedDate = eventDate.toLocaleDateString("en-GB", {
             weekday: "long",
             day: "2-digit",
@@ -113,13 +94,12 @@ function applyRadiusFilter() {
 
     geocodeAddress(inputAddress, (userLat, userLon) => {
         const filteredEvents = eventsData.filter(event => {
-            const venue = venueData.find(v => v.Venue === event.Venue);
-            if (venue) {
+            if (!isNaN(event.Latitude) && !isNaN(event.Longitude)) {
                 const distance = calculateDistance(
                     userLat,
                     userLon,
-                    parseFloat(venue.Latitude),
-                    parseFloat(venue.Longitude)
+                    parseFloat(event.Latitude),
+                    parseFloat(event.Longitude)
                 );
                 return distance <= radius;
             }
@@ -161,7 +141,7 @@ function applyDateRangeFilter() {
         return;
     }
 
-    const start = new Date(startDate);
+    const start = new Date(startDate); // yyyy/mm/dd is ISO-like, so this works
     const end = new Date(endDate);
 
     const filteredData = eventsData.filter(event => {
@@ -172,9 +152,8 @@ function applyDateRangeFilter() {
     populateTable(filteredData);
 }
 
-// Load event and venue data on page load
+// Load event data on page load
 function initialize() {
     loadEventData();
-    loadVenueData();
 }
 initialize();
