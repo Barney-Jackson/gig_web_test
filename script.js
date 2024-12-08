@@ -93,31 +93,119 @@ function populateTable(data) {
     });
 }
 
-// Populate the map with markers
+// Populate the map with markers and custom OverlayView for InfoWindow
 function populateMap(data) {
+    // Clear existing markers
     markers.forEach(marker => marker.setMap(null));
     markers = [];
 
+    // Add markers for events
     data.forEach(event => {
-        if (!isNaN(event.Latitude) && !isNaN(event.Longitude)) {
+        const lat = parseFloat(event.Latitude);
+        const lng = parseFloat(event.Longitude);
+
+        if (!isNaN(lat) && !isNaN(lng)) {
             const marker = new google.maps.Marker({
-                position: { lat: parseFloat(event.Latitude), lng: parseFloat(event.Longitude) },
+                position: { lat, lng },
                 map,
-                title: event.Event_Title
+                title: event.Event_Title || "Untitled Event",
             });
 
-            const infoWindow = new google.maps.InfoWindow({
-                content: `<h3>${event.Event_Title}</h3><p>${event.Address}</p>`
-            });
+            let customInfoWindow = null;
 
+            // Add a click listener to open a custom InfoWindow
             marker.addListener("click", () => {
-                infoWindow.open(map, marker);
+                // Close any existing InfoWindow
+                if (customInfoWindow) {
+                    customInfoWindow.setMap(null);
+                    customInfoWindow = null;
+                }
+
+                // Create a custom InfoWindow using OverlayView
+                class CustomInfoWindow extends google.maps.OverlayView {
+                    constructor(position, content) {
+                        super();
+                        this.position = position;
+                        this.content = content;
+                    }
+                
+                    onAdd() {
+                        const div = document.createElement("div");
+                        div.style.position = "absolute";
+                        div.style.backgroundColor = "#000";
+                        div.style.color = "#fff";
+                        div.style.padding = "10px";
+                        div.style.borderRadius = "8px";
+                        div.style.boxShadow = "0 4px 10px rgba(0, 0, 0, 0.6)";
+                        div.style.fontSize = "14px";
+                        div.style.lineHeight = "1.5";
+                        div.style.maxWidth = "200px"; // Maximum width for consistent layout
+                        div.style.wordWrap = "break-word"; // Handle long text gracefully
+                        div.style.textAlign = "center";
+                
+                        // Add content and close button
+                        div.innerHTML = `
+                            <div style="position: relative;">
+                                <div style="position: absolute; top: 0; right: 0; cursor: pointer; color: #fff; font-size: 18px;" id="close-button">
+                                    &times;
+                                </div>
+                                ${this.content}
+                            </div>
+                        `;
+                
+                        // Close button listener
+                        div.querySelector("#close-button").addEventListener("click", () => {
+                            this.setMap(null);
+                        });
+                
+                        this.div = div;
+                
+                        // Append to overlay pane
+                        const panes = this.getPanes();
+                        panes.floatPane.appendChild(div);
+                    }
+                
+                    draw() {
+                        if (!this.div) return;
+                
+                        const overlayProjection = this.getProjection();
+                        const position = overlayProjection.fromLatLngToDivPixel(this.position);
+                
+                        // Center the info window above the marker
+                        const divWidth = this.div.offsetWidth || 200; // Fallback to max-width
+                        const divHeight = this.div.offsetHeight || 0;
+                
+                        this.div.style.left = `${position.x - divWidth / 2}px`; // Center horizontally
+                        this.div.style.top = `${position.y - divHeight - 15}px`; // Adjust above marker with offset
+                    }
+                
+                    onRemove() {
+                        if (this.div) {
+                            this.div.parentNode.removeChild(this.div);
+                            this.div = null;
+                        }
+                    }
+                }
+                
+
+                // Create and display the custom InfoWindow
+                customInfoWindow = new CustomInfoWindow(
+                    marker.getPosition(),
+                    `<strong>${event.Event_Title}</strong><br>${event.Address}<br>${event.url
+                        ? `<a href="${event.url}" target="_blank" style="color: #1e90ff; text-decoration: none;">Link</a>`
+                        : "No Link Available"}`
+                );
+                customInfoWindow.setMap(map);
             });
 
             markers.push(marker);
         }
     });
 }
+
+
+
+
 
 // Filter events by radius
 function applyRadiusFilter() {
