@@ -46,6 +46,8 @@ function loadEventData() {
         complete: function(results) {
             eventsData = results.data;
             populateTable(eventsData);
+            populateMap(eventsData);
+
         },
         error: function(error) {
             console.error("Error loading event CSV:", error);
@@ -279,9 +281,26 @@ function applyDateRangeFilter() {
     populateMap(filteredData);
 }
 
+
+function showTab(tabId, contentId) {
+    // Hide all tab contents
+    const contents = document.querySelectorAll('.tab-content');
+    contents.forEach(content => content.classList.remove('active'));
+
+    // Remove active class from all tab buttons
+    const tabs = document.querySelectorAll('.tab-button');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    // Show the selected content and mark the tab as active
+    document.getElementById(contentId).classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+    loadEventData();
+}
+
 // Load event data on page load
 function initialize() {
     loadEventData();
-    populateMap(event);
+    // Ensure the default tab is displayed
+    document.getElementById('table-tab').click();
 }
 initialize();
